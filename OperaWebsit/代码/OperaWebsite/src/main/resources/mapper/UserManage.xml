@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hggc.dao.UserManageDao">
+
+    <!--用户登录方法-->
+    <select id="userLogin" parameterType="com.hggc.bean.User" resultType="com.hggc.bean.User">
+        select id ,user_name as userName,user_password as userPassword,email from t_user where email = #{email} and user_password = #{userPassword};
+    </select>
+
+
+    <insert id="userRegister" parameterType="com.hggc.bean.User">
+        insert into t_user(user_name,user_password,email) values (#{userName},#{userPassword},#{email});
+    </insert>
+
+    <select id="findUserByEmail" parameterType="String" resultType="com.hggc.bean.User">
+        select id ,user_name as userName,user_password as userPassword,email from t_user where email = #{email};
+    </select>
+
+    <update id="updateUser" parameterType="com.hggc.bean.User">
+        update t_user set user_name = #{userName},user_password = #{userPassword},email = #{email} where id = #{id};
+    </update>
+
+    <select id="getUserById" parameterType="int" resultType="com.hggc.bean.User">
+        select id ,user_name as userName,user_password as userPassword,email from t_user where id = #{id};
+    </select>
+
+    <select id="getAllType" resultType="com.hggc.bean.Type">
+        select id,type_name as typeName from t_type;
+    </select>
+
+    <select id="getMainPageDataByType" resultType="com.hggc.bean.Opera" parameterType="com.hggc.bean.Type">
+        select id,opera_name as operaName,introduce,publication_time as publicationTime,watch_number as watchNumber,collection_number as collectionNumber,opera_status as operaStatus,file_name as fileName,type_id as typeId,user_id as userId
+        from t_opera
+        where opera_status = '审核通过' and type_id = #{id}
+        limit 0,6;
+    </select>
+
+    <select id="getAllUser" resultType="com.hggc.bean.User">
+        select id,user_name as userName,user_password as userPassword,email from t_user;
+    </select>
+
+    <select id="getHotOpera" resultType="com.hggc.bean.Opera">
+        select id,opera_name as operaName,introduce,publication_time as publicationTime,watch_number as watchNumber,collection_number as collectionNumber,opera_status as operaStatus,file_name as fileName,type_id as typeId,user_id as userId
+        from t_opera
+        where opera_status = '审核通过'
+        order by watch_number desc
+        limit 0,51;
+    </select>
+
+    <select id="getAllNotice" resultType="com.hggc.bean.Notice">
+        select id,content,publication_time as publicationTime from t_notice order by publication_time desc;
+    </select>
+
+    <select id="getAllTMessage" resultType="com.hggc.bean.TMessage">
+        select id,content,message_time as messageTime,user_id as userId
+        from t_message
+        order by message_time desc;
+    </select>
+
+    <insert id="saveTMessage" parameterType="com.hggc.bean.TMessage">
+        insert into t_message(content,message_time,user_id)
+        values (#{content},#{messageTime},#{userId});
+    </insert>
+
+    <insert id="saveCollection" parameterType="com.hggc.bean.Collection">
+        insert into t_collection(collection_time,user_id,opera_id)
+        values (#{collectionTime},#{userId},#{operaId});
+    </insert>
+
+    <update id="updateOperaCollectionNumber" parameterType="hashmap">
+        update t_opera set collection_number = #{newCollectionNumber} where id = #{operaId};
+    </update>
+
+    <select id="getCollectionByUserIdAndLimit" parameterType="hashmap" resultType="com.hggc.bean.Collection">
+        select id,collection_time as collectionTime,user_id as userId,opera_id as operaId
+        from t_collection
+        where user_id = #{userId}
+        limit #{start},#{number};
+    </select>
+
+    <select id="getCollectionByUserId" parameterType="int" resultType="com.hggc.bean.Collection">
+        select id,collection_time as collectionTime,user_id as userId,opera_id as operaId
+        from t_collection
+        where user_id = #{userId};
+    </select>
+
+</mapper>

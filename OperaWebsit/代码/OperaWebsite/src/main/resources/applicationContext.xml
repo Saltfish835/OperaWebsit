@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--加载外部jdbc.properties的数据库配置文件-->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties" />
+    </bean>
+
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <!--初始化连接大小-->
+        <property name="initialSize" value="${initialSize}"/>
+        <!--连接池最大数量-->
+        <property name="maxActive" value="${maxActive}"/>
+        <!--连接池最大空闲-->
+        <property name="maxIdle" value="${maxIdle}"/>
+        <!--连接池最小空闲-->
+        <property name="minIdle" value="${minIdle}"/>
+        <!--获取连接最大等待时间-->
+        <property name="maxWait" value="${maxWait}"/>
+    </bean>
+
+    <!--配置SqlsessionFactory对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据库连接池-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--配置sql配置文件：mapper需要用到的xml文件-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    </bean>
+
+    <!--配置扫描dao接口包，动态实现dao接口，注入到spring容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入sqlSessionFactory-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+        <!--给出要扫描的接口的位置-->
+        <property name="basePackage" value="com.hggc.dao"/>
+    </bean>
+
+    <!--扫描dao,service包，不扫描controller-->
+    <context:component-scan base-package="com.hggc">
+        <!--排除controller，这个包再springMVC的配置文件中再扫描进入spring容器-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+</beans>

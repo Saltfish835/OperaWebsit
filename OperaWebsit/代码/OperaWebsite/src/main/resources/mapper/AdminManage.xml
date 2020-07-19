@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hggc.dao.AdminManageDao">
+
+    <select id="adminLogin" resultType="com.hggc.bean.Admin" parameterType="com.hggc.bean.Admin">
+        select id,admin_name as adminName,admin_password as adminPassword from t_admin where admin_name = #{adminName} and admin_password = #{adminPassword};
+    </select>
+
+    <select id="getNewUploadOperaGroupByUserId" resultType="com.hggc.bean.Opera">
+        select id,opera_name as operaName,introduce,publication_time as publicationTime,watch_number as watchNumber,collection_number as collectionNumber,opera_status as operaStatus,file_name as fileName,type_id as typeId,user_id as userId
+        from t_opera
+        where opera_status = '审核中'
+        group by user_id;
+    </select>
+
+    <select id="getOperaByStatus" resultType="com.hggc.bean.Opera" parameterType="String">
+        select id,opera_name as operaName,introduce,publication_time as publicationTime,watch_number as watchNumber,collection_number as collectionNumber,opera_status as operaStatus,file_name as fileName,type_id as typeId,user_id as userId
+        from t_opera
+        where opera_status = #{status};
+    </select>
+
+    <select id="getNeedHandleOperaByFenye" parameterType="hashmap" resultType="com.hggc.bean.Opera">
+        select id,opera_name as operaName,introduce,publication_time as publicationTime,watch_number as watchNumber,collection_number as collectionNumber,opera_status as operaStatus,file_name as fileName,type_id as typeId,user_id as userId
+        from t_opera
+        where opera_status = '审核中'
+        limit #{start},#{number};
+    </select>
+
+    <select id="getNewCommentGroupByUserId" resultType="com.hggc.bean.OperaComment">
+        select id,content,comment_status as commentStatus,comment_time as commentTime,user_id as userId,opera_id as operaId
+        from t_opera_comment
+        group by user_id;
+    </select>
+
+    <select id="getNewOperaComment" resultType="com.hggc.bean.OperaComment">
+        select id,content,comment_status as commentStatus,comment_time as commentTime,user_id as userId,opera_id as operaId
+        from t_opera_comment
+        where comment_status = '0';
+    </select>
+
+    <update id="updateOperaCommentContent" parameterType="hashmap">
+        update t_opera_comment set content = #{content},comment_status = '1' where id = #{id};
+    </update>
+
+
+    <insert id="saveNotice" parameterType="com.hggc.bean.Notice">
+        insert into t_notice(content,publication_time) values (#{content},#{publicationTime});
+    </insert>
+
+</mapper>

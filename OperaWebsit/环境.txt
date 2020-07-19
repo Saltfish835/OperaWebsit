@@ -1,0 +1,6 @@
+jdk1.8
+tomcat9.0
+mysql8.0
+idea2019
+
+数据库文件（xiquwang.sql）自己执行，不要拿去导入
