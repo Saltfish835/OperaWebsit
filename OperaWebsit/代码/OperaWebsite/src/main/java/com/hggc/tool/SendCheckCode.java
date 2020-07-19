@@ -23,7 +23,7 @@ public class SendCheckCode {
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.host", "smtp.qq.com");
             // 发件人的账号
-            props.put("mail.user", "835986734@qq.com");
+            props.put("mail.user", "xxx");
             // 访问SMTP服务时需要提供的密码
             props.put("mail.password", "xxxx");
 
